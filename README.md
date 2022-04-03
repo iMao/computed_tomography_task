@@ -1,1 +1,1 @@
-# computed_tomography_task
+# computed tomography task
