@@ -1,9 +1,10 @@
 #include "utils.h"
 
-#include <mgl2/mgl.h>
 #include <string.h>
 
 #include <fstream>
+
+#include "algotools.h"
 
 namespace tmg {
 
@@ -115,114 +116,15 @@ ReadingFileStatus ReadFilePoints(const std::string& fname,
   return ReadingFileStatus::kREAD_SUCCESS;
 }
 
-void ComposeM3x3(Line2D& L1, Line2D& L2, Line2D& L3, math::M3x3& matrix) {
-  matrix[0] = L1.GetA();
-  matrix[1] = L1.GetB();
-  matrix[2] = L1.GetC();
-
-  matrix[3] = L2.GetA();
-  matrix[4] = L2.GetB();
-  matrix[5] = L2.GetC();
-
-  matrix[6] = L3.GetA();
-  matrix[7] = L3.GetB();
-  matrix[8] = L3.GetC();
-}
-
-void CalcCrossPoints(cv::Mat& cross_image_U16, const cv::Mat& mask_image_U8,
-                     std::vector<Line2D>& lines) {
-  int rows = cross_image_U16.rows;
-  int cols = cross_image_U16.cols;
-
-  for (int y = 0; y < rows; y++) {
-    for (int x = 0; x < cols; x++) {
-      // check mask
-      if (mask_image_U8.at<uint8_t>(y, x) == 0) {
-        continue;
-      }
-
-      unsigned short number_lines_trough_pixel = 0;
-
-      cv::Point2i p(x, y);
-      cv::Point2i cvtp = CvtCoordinatesToImageCenter(p, cols, rows);
-
-      for (auto& l : lines) {
-        if (l.IsPointBelongLine(cvtp.x, cvtp.y)) {
-          number_lines_trough_pixel++;
-        }
-      }
-      cross_image_U16.at<uint16_t>(y, x) = number_lines_trough_pixel;
-    }
-  }
-}
-
-void ShowCrossImageAsPicture(const cv::Mat& cross_image, cv::Mat& gray_image) {
-  double min_number;
-  double max_number;
-  cv::minMaxIdx(cross_image, &min_number, &max_number);
-
-  for (int y = 0; y < cross_image.rows; y++) {
-    for (int x = 0; x < cross_image.cols; x++) {
-      double pix =
-          static_cast<double>(cross_image.at<uint16_t>(y, x)) / max_number;
-
-      gray_image.at<uint8_t>(y, x) = static_cast<uint8_t>(255.0 * pix);
-    }
-  }
-}
-
-cv::Point2i CvtCoordinatesToImageCenter(cv::Point2i& p, int image_width,
-                                        int image_height) {
-  cv::Point2i cvtp;
-  cvtp.x = p.x - image_width / 2;
-  cvtp.y = -p.y + image_height / 2;
-  return cvtp;
-}
-
-cv::Point2i CvtCoordinatesFromImageCenter(cv::Point2i& p, int image_width,
-                                          int image_height) {
-  cv::Point2i cvtp;
-  cvtp.x = p.x + image_width / 2;
-  cvtp.y = -p.y + image_height / 2;
-  return cvtp;
-}
-
-void DrawLines(cv::Mat& gray_image, std::vector<Line2D>& lines) {
-  cv::Scalar line_color(255);
-
-  for (auto& l : lines) {
-    cv::Point2i p1(l.GetX1(), l.GetY1());
-    cv::Point2i p2(l.GetX2(), l.GetY2());
-
-    cv::Point2i cvtp1 =
-        CvtCoordinatesFromImageCenter(p1, gray_image.cols, gray_image.rows);
-    cv::Point2i cvtp2 =
-        CvtCoordinatesFromImageCenter(p2, gray_image.cols, gray_image.rows);
-
-    cv::line(gray_image, cvtp1, cvtp2, line_color, 2);
-  }
-}
-
-void DrawCrossImagePlot3D(const cv::Mat& cross_image,
-                          const std::string& plot3d_name) {
-  int rows = cross_image.rows;
-  int cols = cross_image.cols;
-  mglData data(rows, cols);
-  for (int y = 0; y < rows; y++) {
-    for (int x = 0; x < cols; x++) {
-      data.a[x + y * cols] = cross_image.at<uint16_t>(y, x);
-    }
+void PrintCrossPoints(const std::vector<Point2D>& cross_points,
+                      size_t max_number_points) {
+  if (max_number_points > cross_points.size()) {
+    max_number_points = cross_points.size();
   }
 
-  mglGraph gr;
-  gr.Rotate(60, 40);
-  gr.Box();
-  gr.Surf(data);
-
-  gr.Cont(data, "y");
-  gr.Light(true);
-  gr.Axis();
-  gr.WriteFrame(plot3d_name.c_str());
+  for (int i = 0; i < max_number_points; i++) {
+    std::cout << cross_points[i] << std::endl;
+  }
 }
 
 }  // namespace tmg

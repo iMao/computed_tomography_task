@@ -59,6 +59,7 @@ link_directories(${CMAKE_PREFIX_PATH}/lib/)
 
 
 set(HDR
+    algotools.h
     determinant.h
     lines.h
     points.h
@@ -66,6 +67,7 @@ set(HDR
     )
 
 set(SRC
+    algotools.cpp
     determinant.cpp
     lines.cpp
     points.cpp

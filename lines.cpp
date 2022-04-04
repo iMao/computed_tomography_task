@@ -2,7 +2,7 @@
 
 namespace tmg {
 
-constexpr float TOLERANCE{10.0};
+constexpr float TOLERANCE{500.0};
 
 Line2D::Line2D(float x1, float y1, float x2, float y2)
     : x1_(x1), y1_(y1), x2_(x2), y2_(y2) {
@@ -56,7 +56,7 @@ float Line2D::GetY2() const { return y2_; }
 bool Line2D::IsPointBelongLine(const float x, const float y) const {
   float res = A_ * x + B_ * y + C_;
 
-  return (std::abs(res) < TOLERANCE);
+  return ((res > -TOLERANCE) && (res < TOLERANCE));
 }
 
 bool Line2D::IsPointBelongLine(const cv::Point2f &point) const {

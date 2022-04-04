@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <iostream>
 #include <opencv2/highgui.hpp>
 
+#include "algotools.h"
 #include "utils.h"
 
 const int IMAGE_ROWS{2200};
@@ -24,6 +26,7 @@ int main(int arg, char* argv[]) {
 
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
+  std::vector<tmg::Point2D> cross_points;
 
   int number_lines;
   int number_points;
@@ -68,10 +71,24 @@ int main(int arg, char* argv[]) {
   cv::resize(gray_image_with_lines, scaled_gray_image_with_lines,
              cv::Size(IMAGE_COLS / SCALE_FACTOR, IMAGE_ROWS / SCALE_FACTOR));
 
+  // show data as images
   cv::imshow("cross points", scaled_gray_image);
   cv::imshow("lines", scaled_gray_image_with_lines);
 
+  // draw plot3D
   tmg::DrawCrossImagePlot3D(cross_image_U16, plot3d_fname);
+
+  // select
+  tmg::SelectNotZeroCrossPoints(cross_image_U16, cross_points);
+
+  std::sort(
+      cross_points.begin(), cross_points.end(),
+      [&](tmg::Point2D& cross_point1, tmg::Point2D& cross_point2) -> bool {
+        return (cross_point1.number_lines_through_point >
+                cross_point2.number_lines_through_point);
+      });
+
+  tmg::PrintCrossPoints(cross_points, 1000);
 
   cv::waitKey();
 

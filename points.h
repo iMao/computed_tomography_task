@@ -2,21 +2,21 @@
 #define TMGTYPES_H
 
 #include <iostream>
+#include <opencv2/core.hpp>
 
 namespace tmg {
 
-struct Point2D {
+class Point2D : public cv::Point2f {
+ public:
   Point2D();
-  Point2D(float _x, float _y, int _number_lines_through_point);
+  Point2D(float x, float y, int _number_lines_through_point);
   Point2D(const Point2D& point);
   Point2D& operator=(const Point2D& point);
   ~Point2D();
 
-  Point2D(Point2D&& point) = delete;
-  Point2D& operator=(Point2D&& point) = delete;
+  Point2D(Point2D&& point);
+  Point2D& operator=(Point2D&& point);
 
-  float x;
-  float y;
   int number_lines_through_point;
 };
 
