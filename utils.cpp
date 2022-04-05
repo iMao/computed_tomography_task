@@ -9,6 +9,7 @@
 namespace tmg {
 
 constexpr int BUFFER_SIZE{64};
+constexpr int OFFSET{10};
 
 ReadingFileStatus ReadFileLines(const std::string& fname,
                                 std::vector<Line2D>& lines, int& number_lines,
@@ -124,6 +125,14 @@ void PrintCrossPoints(const std::vector<Point2D>& cross_points,
 
   for (int i = 0; i < max_number_points; i++) {
     std::cout << cross_points[i] << std::endl;
+  }
+}
+
+void ShowObjects(cv::Mat& image, std::vector<cv::Rect>& object_collection) {
+  for (auto& rect : object_collection) {
+    cv::Rect rct(rect.x - OFFSET, rect.y - OFFSET, rect.width + OFFSET,
+                 rect.height + OFFSET);
+    cv::rectangle(image, rect, cv::Scalar(255));
   }
 }
 

@@ -3,6 +3,8 @@
 #include <mgl2/mgl.h>
 #include <string.h>
 
+#define roundf(x) floor(x + 0.5f)
+
 namespace tmg {
 
 void ComposeM3x3(Line2D& L1, Line2D& L2, Line2D& L3, math::M3x3& matrix) {
@@ -130,5 +132,76 @@ void SelectNotZeroCrossPoints(const cv::Mat& cross_image_U16,
     }
   }
 }
+
+void WeightedBresenhamLine(cv::Mat& cross_image_U16, int x1, int y1, int x2,
+                           int y2) {
+  int dx = (x2 - x1 >= 0 ? 1 : -1);
+  int dy = (y2 - y1 >= 0 ? 1 : -1);
+
+  int length_x = std::abs(x2 - x1);
+  int length_y = std::abs(y2 - y1);
+
+  int length = std::max(length_x, length_y);
+
+  if (length == 0) {
+    cross_image_U16.at<uint16_t>(y1, x1)++;
+  } else {
+    if (length_y <= length_x) {
+      // Начальные значения
+      int x = x1;
+      int y = y1;
+      int d = -length_x;
+
+      // Основной цикл
+      length++;
+      while (length--) {
+        cross_image_U16.at<uint16_t>(y, x)++;
+
+        x += dx;
+        d += 2 * length_y;
+        if (d > 0) {
+          d -= 2 * length_x;
+          y += dy;
+        }
+      }
+    } else {
+      // Начальные значения
+      int x = x1;
+      int y = y1;
+      int d = -length_y;
+
+      // Основной цикл
+      length++;
+      while (length--) {
+        cross_image_U16.at<uint16_t>(y, x)++;
+
+        y += dy;
+        d += 2 * length_x;
+        if (d > 0) {
+          d -= 2 * length_y;
+          x += dx;
+        }
+      }
+    }
+  }
+}
+
+void DrawWeightedBresenhamLines(cv::Mat& cross_image_U16,
+                                std::vector<Line2D>& lines) {
+  for (auto& l : lines) {
+    cv::Point2i p1(l.GetX1(), l.GetY1());
+    cv::Point2i p2(l.GetX2(), l.GetY2());
+
+    cv::Point2i cvtp1 = CvtCoordinatesFromImageCenter(p1, cross_image_U16.cols,
+                                                      cross_image_U16.rows);
+    cv::Point2i cvtp2 = CvtCoordinatesFromImageCenter(p2, cross_image_U16.cols,
+                                                      cross_image_U16.rows);
+
+    WeightedBresenhamLine(cross_image_U16, cvtp1.x, cvtp1.y, cvtp2.x, cvtp2.y);
+  }
+}
+
+void PointsLocalization(const cv::Mat& constellation_image,
+                        std::vector<Point2D>& points) {}
 
 }  // namespace tmg

@@ -1,13 +1,8 @@
 #include <algorithm>
 #include <iostream>
-#include <opencv2/highgui.hpp>
 
-#include "algotools.h"
+#include "algorithms.h"
 #include "utils.h"
-
-const int IMAGE_ROWS{2200};
-const int IMAGE_COLS{2200};
-const int SCALE_FACTOR{2};
 
 int main(int arg, char* argv[]) {
   //
@@ -26,7 +21,6 @@ int main(int arg, char* argv[]) {
 
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
-  std::vector<tmg::Point2D> cross_points;
 
   int number_lines;
   int number_points;
@@ -41,58 +35,7 @@ int main(int arg, char* argv[]) {
 
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  // matrix for work
-  cv::Mat gray_image(IMAGE_ROWS, IMAGE_COLS, CV_8U);
-  cv::Mat cross_image_U16(IMAGE_ROWS, IMAGE_COLS, CV_16U);
-  cv::Mat gray_image_with_lines(IMAGE_ROWS, IMAGE_COLS, CV_8U);
-
-  // fill zero value
-  gray_image.setTo(0);
-  cross_image_U16.setTo(0);
-  gray_image_with_lines.setTo(0);
-
-  // scaled images
-  cv::Mat scaled_gray_image(IMAGE_ROWS / SCALE_FACTOR,
-                            IMAGE_COLS / SCALE_FACTOR, CV_8U);
-  cv::Mat scaled_gray_image_with_lines(IMAGE_ROWS / SCALE_FACTOR,
-                                       IMAGE_COLS / SCALE_FACTOR, CV_8U);
-
-  // pipeline
-  tmg::DrawLines(gray_image_with_lines, lines);  // creation mask
-
-  tmg::CalcCrossPoints(cross_image_U16, gray_image_with_lines, lines);
-
-  tmg::ShowCrossImageAsPicture(cross_image_U16,
-                               gray_image);  // convertion for picture view
-
-  // scaling
-  cv::resize(gray_image, scaled_gray_image,
-             cv::Size(IMAGE_COLS / SCALE_FACTOR, IMAGE_ROWS / SCALE_FACTOR));
-  cv::resize(gray_image_with_lines, scaled_gray_image_with_lines,
-             cv::Size(IMAGE_COLS / SCALE_FACTOR, IMAGE_ROWS / SCALE_FACTOR));
-
-  // show data as images
-  cv::imshow("cross points", scaled_gray_image);
-  cv::imshow("lines", scaled_gray_image_with_lines);
-
-  // draw plot3D
-  tmg::DrawCrossImagePlot3D(cross_image_U16, plot3d_fname);
-
-  // select
-  tmg::SelectNotZeroCrossPoints(cross_image_U16, cross_points);
-
-  std::sort(
-      cross_points.begin(), cross_points.end(),
-      [&](tmg::Point2D& cross_point1, tmg::Point2D& cross_point2) -> bool {
-        return (cross_point1.number_lines_through_point >
-                cross_point2.number_lines_through_point);
-      });
-
-  tmg::PrintCrossPoints(cross_points, 1000);
-
-  cv::waitKey();
-
-  cv::destroyAllWindows();
+  AlgorithmWeightedBresenhamLine(lines, points);
 
   lines.clear();
   points.clear();

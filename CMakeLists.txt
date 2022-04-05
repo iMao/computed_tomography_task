@@ -60,7 +60,10 @@ link_directories(${CMAKE_PREFIX_PATH}/lib/)
 
 set(HDR
     algotools.h
+    algorithms.h
     determinant.h
+    detector_interface.h
+    dispersion_detector.h
     lines.h
     points.h
     utils.h
@@ -68,7 +71,9 @@ set(HDR
 
 set(SRC
     algotools.cpp
+    algorithms.cpp
     determinant.cpp
+    dispersion_detector.cpp
     lines.cpp
     points.cpp
     utils.cpp

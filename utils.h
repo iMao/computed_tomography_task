@@ -49,6 +49,8 @@ ReadingFileStatus ReadFilePoints(const std::string& fname,
 void PrintCrossPoints(const std::vector<tmg::Point2D>& cross_points,
                       size_t max_number_points = 10);
 
+void ShowObjects(cv::Mat& image, std::vector<cv::Rect>& object_collection);
+
 }  // namespace tmg
 
 #endif  // UTILS_H

@@ -70,6 +70,24 @@ void DrawCrossImagePlot3D(const cv::Mat& cross_image,
 void SelectNotZeroCrossPoints(const cv::Mat& cross_image_U16,
                               std::vector<tmg::Point2D>& cross_points);
 
+/**
+ * @brief WeightedBresenhamLine
+ * @param cross_image_U16
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2
+ */
+void WeightedBresenhamLine(cv::Mat& cross_image_U16, int x1, int y1, int x2,
+                           int y2);
+/**
+ * @brief DrawWeightedBresenhamLines
+ * @param cross_image_U16
+ * @param lines
+ */
+void DrawWeightedBresenhamLines(cv::Mat& cross_image_U16,
+                                std::vector<Line2D>& lines);
+
 }  // namespace tmg
 
 #endif  // ALGOTOOLS_H
