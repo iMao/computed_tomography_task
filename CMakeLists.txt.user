@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.1, 2022-04-05T16:35:05. -->
+<!-- Written by QtCreator 6.0.1, 2022-04-06T19:09:47. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -82,6 +82,9 @@
     <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
     <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
     <value type="bool" key="ClangTools.UseGlobalSettings">true</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="CppEditor.QuickFix">
+    <value type="bool" key="UseGlobalSettings">true</value>
    </valuemap>
   </valuemap>
  </data>
@@ -210,7 +213,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">computed_tomography_task</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.computed_tomography_task</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">computed_tomography_task</value>
-    <value type="QString" key="RunConfiguration.Arguments">/home/main/Documents/test_files/0-lines.txt    /home/main/Documents/test_files/0-points.txt</value>
+    <value type="QString" key="RunConfiguration.Arguments">/home/main/Documents/test_files/2-lines.txt    /home/main/Documents/test_files/2-points.txt</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>

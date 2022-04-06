@@ -1,9 +1,29 @@
 #include "algorithms.h"
 
+#include <algorithm>
+#include <ctime>
+#include <map>
 #include <memory>
+#include <random>
+#include <set>
+#include <utility>
 
 #include "algotools.h"
+#include "determinant.h"
 #include "dispersion_detector.h"
+
+using CrossPoint = struct { int x, y; };
+
+struct ComparePoints {
+  bool operator()(const CrossPoint& l, const CrossPoint& r) const {
+    if (l.x == r.x) {
+      return l.y < r.y;
+    } else if (l.x < r.x) {
+      return true;
+    }
+    return false;
+  }
+};
 
 const int IMAGE_ROWS{2200};
 const int IMAGE_COLS{2200};
@@ -117,4 +137,97 @@ void AlgorithmWeightedBresenhamLine(std::vector<tmg::Line2D>& lines,
   cv::waitKey();
 
   cv::destroyAllWindows();
+}
+
+void AlgorithmAlgebraicSolution(std::vector<tmg::Line2D>& lines,
+                                unsigned int number_iterations,
+                                int needed_number_distinctive_points,
+                                std::vector<tmg::Point2D>& cross_points) {
+  size_t lines_set_size = lines.size();
+
+  // our results with most relible data
+  std::map<CrossPoint, std::set<unsigned int>, ComparePoints>
+      distinctive_points;
+
+  auto random_device = std::random_device{};
+  auto random_engine = std::default_random_engine{random_device()};
+
+  math::M3x3 ABC3x3;       // matrix 3x3 which save Ai,Bi,Ci coefficients
+  CrossPoint cross_point;  // save coordinates(key) of intersection point
+  std::set<unsigned int> three_lines;  // save three number of intersected lines
+
+  srand(time(0));
+  for (unsigned int i = 0; i < number_iterations; i++) {
+    std::shuffle(lines.begin(), lines.end(), random_engine);
+
+    // chose 3 random indexes
+    int index_line1 = rand() % (lines_set_size - 1);
+    int index_line2 = rand() % (lines_set_size - 1);
+    int index_line3 = rand() % (lines_set_size - 1);
+
+    // compose of matrix
+    tmg::ComposeM3x3(lines[index_line1], lines[index_line2], lines[index_line3],
+                     ABC3x3);
+
+    // solve intersection task, if success calc coordinates
+    auto result = math::CalcIntersectionPoint(
+        ABC3x3, lines[index_line1].GetLineNumber(),
+        lines[index_line2].GetLineNumber(), lines[index_line3].GetLineNumber());
+
+    //    std::cout << "L1:" << lines[index_line1].GetLineNumber()
+    //              << " L2:" << lines[index_line2].GetLineNumber()
+    //              << " L3:" << lines[index_line3].GetLineNumber() <<
+    //              std::endl;
+
+    // if three lines intersect
+    if (result.has_value()) {
+      cross_point.x = static_cast<int>(result.value().x);
+      cross_point.y = static_cast<int>(result.value().y);
+
+      three_lines.insert(result.value().L1);
+      three_lines.insert(result.value().L2);
+      three_lines.insert(result.value().L3);
+
+      // check, may be this point already exist
+      auto it = distinctive_points.find(cross_point);
+      // if no
+      if (it == distinctive_points.end()) {
+        distinctive_points.insert(std::make_pair(cross_point, three_lines));
+      } else {
+        for (auto& n : three_lines) {
+          it->second.insert(n);  // adds unique line number in
+                                 // std::set<uint32_t>
+        }
+      }
+      three_lines.clear();
+    }
+  }
+
+  std::cout << "Number cross point in map:" << distinctive_points.size()
+            << std::endl;
+
+  // when  all iterations finished
+  // we need select points with max number of intersected lines
+  // most probable this points - are our points
+
+  for (int j = 0; j < needed_number_distinctive_points; j++) {
+    int max_number_lines = 0;
+
+    std::map<CrossPoint, std::set<unsigned int>>::iterator current_it;
+    auto it = distinctive_points.begin();
+    size_t current_number_points = distinctive_points.size();
+    for (size_t k = 0; k < current_number_points; k++) {
+      if (it->second.size() > max_number_lines) {
+        max_number_lines = it->second.size();
+        current_it = it;
+      }
+      it++;
+    }
+
+    // now we have iterator at point with max intersected lines
+    cross_points.emplace_back(it->first.x, it->first.y, max_number_lines);
+
+    // we need remove point with max intersected lines
+    distinctive_points.erase(current_it);
+  }
 }

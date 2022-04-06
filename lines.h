@@ -11,14 +11,15 @@ namespace tmg {
 class Line2D {
  public:
   Line2D() = delete;
-  Line2D(float x1, float y1, float x2, float y2);
+  Line2D(unsigned int line_number, float x1, float y1, float x2, float y2);
   Line2D(const Line2D& line);
   Line2D& operator=(const Line2D& line);
   ~Line2D();
 
-  Line2D(Line2D&& line) = delete;
-  Line2D& operator=(Line2D&& line) = delete;
+  Line2D(Line2D&& line) = default;
+  Line2D& operator=(Line2D&& line) = default;
 
+  unsigned int GetLineNumber() const;
   float GetA() const;
   float GetB() const;
   float GetC() const;
@@ -38,6 +39,8 @@ class Line2D {
   void CalcGeneralEquationCoefficients();
 
  private:
+  unsigned int line_number_;
+
   float x1_;
   float y1_;
   float x2_;

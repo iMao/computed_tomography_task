@@ -2,16 +2,17 @@
 
 namespace tmg {
 
-constexpr float TOLERANCE{500.0};
+constexpr float TOLERANCE{1.0};
 
-Line2D::Line2D(float x1, float y1, float x2, float y2)
-    : x1_(x1), y1_(y1), x2_(x2), y2_(y2) {
+Line2D::Line2D(unsigned int line_number, float x1, float y1, float x2, float y2)
+    : line_number_(line_number), x1_(x1), y1_(y1), x2_(x2), y2_(y2) {
   CalcDirectLineVector();
   CalcGeneralEquationCoefficients();
 }
 
 Line2D::Line2D(const Line2D &line)
-    : x1_(line.x1_),
+    : line_number_(line.line_number_),
+      x1_(line.x1_),
       y1_(line.y1_),
       x2_(line.x2_),
       y2_(line.y2_),
@@ -22,6 +23,7 @@ Line2D::Line2D(const Line2D &line)
       C_(line.C_) {}
 
 Line2D &Line2D::operator=(const Line2D &line) {
+  line_number_ = line.line_number_;
   x1_ = line.x1_;
   y1_ = line.y1_;
   x2_ = line.x2_;
@@ -36,6 +38,8 @@ Line2D &Line2D::operator=(const Line2D &line) {
 
   return *this;
 }
+
+unsigned int Line2D::GetLineNumber() const { return line_number_; }
 
 Line2D::~Line2D() {}
 

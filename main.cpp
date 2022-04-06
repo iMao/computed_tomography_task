@@ -21,6 +21,7 @@ int main(int arg, char* argv[]) {
 
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
+  std::vector<tmg::Point2D> detected_points;
 
   int number_lines;
   int number_points;
@@ -35,7 +36,9 @@ int main(int arg, char* argv[]) {
 
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  AlgorithmWeightedBresenhamLine(lines, points);
+  AlgorithmAlgebraicSolution(lines, 5000, number_points, detected_points);
+
+  tmg::PrintCrossPoints(detected_points, number_check_points);
 
   lines.clear();
   points.clear();

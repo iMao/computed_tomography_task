@@ -17,6 +17,7 @@ ReadingFileStatus ReadFileLines(const std::string& fname,
   char buffer[BUFFER_SIZE]{};
   char* ptr{nullptr};
   float coordinates[4];
+  unsigned int line_number = 0;
 
   // open file
   std::ifstream ifs(fname);
@@ -49,8 +50,8 @@ ReadingFileStatus ReadFileLines(const std::string& fname,
         ptr = strtok(nullptr, " ");
       }
 
-      lines.emplace_back(coordinates[0], coordinates[1], coordinates[2],
-                         coordinates[3]);
+      lines.emplace_back(line_number++, coordinates[0], coordinates[1],
+                         coordinates[2], coordinates[3]);
       memset(buffer, '\0', BUFFER_SIZE);
     }
 
