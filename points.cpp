@@ -4,10 +4,10 @@
 
 namespace tmg {
 
-Point2D::Point2D() : cv::Point2f(0.0f, 0.0f), number_lines_through_point(0) {}
+Point2D::Point2D() : cv::Point2d(0.0, 0.0), number_lines_through_point(0) {}
 
-Point2D::Point2D(float x, float y, int _number_lines_through_point)
-    : cv::Point2f(x, y),
+Point2D::Point2D(double x, double y, int _number_lines_through_point)
+    : cv::Point2d(x, y),
       number_lines_through_point(_number_lines_through_point) {}
 
 Point2D::Point2D(const Point2D& point) {

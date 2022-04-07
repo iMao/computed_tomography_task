@@ -6,10 +6,10 @@
 
 namespace tmg {
 
-class Point2D : public cv::Point2f {
+class Point2D : public cv::Point2d {
  public:
   Point2D();
-  Point2D(float x, float y, int _number_lines_through_point);
+  Point2D(double x, double y, int _number_lines_through_point);
   Point2D(const Point2D& point);
   Point2D& operator=(const Point2D& point);
   ~Point2D();

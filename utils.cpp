@@ -16,7 +16,7 @@ ReadingFileStatus ReadFileLines(const std::string& fname,
                                 int& number_points) {
   char buffer[BUFFER_SIZE]{};
   char* ptr{nullptr};
-  float coordinates[4];
+  double coordinates[4];
   unsigned int line_number = 0;
 
   // open file
@@ -69,7 +69,7 @@ ReadingFileStatus ReadFilePoints(const std::string& fname,
                                  int& number_points) {
   char buffer[BUFFER_SIZE]{};
   char* ptr{nullptr};
-  float coordinates[2];
+  double coordinates[2];
   int number_lines_through_point{0};
 
   // open file

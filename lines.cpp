@@ -2,9 +2,10 @@
 
 namespace tmg {
 
-constexpr float TOLERANCE{1.0};
+constexpr double TOLERANCE{1.0};
+constexpr double zero{0.0001};
 
-Line2D::Line2D(unsigned int line_number, float x1, float y1, float x2, float y2)
+Line2D::Line2D(unsigned int line_number, double x1, double y1, double x2, double y2)
     : line_number_(line_number), x1_(x1), y1_(y1), x2_(x2), y2_(y2) {
   CalcDirectLineVector();
   CalcGeneralEquationCoefficients();
@@ -43,21 +44,21 @@ unsigned int Line2D::GetLineNumber() const { return line_number_; }
 
 Line2D::~Line2D() {}
 
-float Line2D::GetA() const { return A_; }
-float Line2D::GetB() const { return B_; }
-float Line2D::GetC() const { return C_; }
+double Line2D::GetA() const { return A_; }
+double Line2D::GetB() const { return B_; }
+double Line2D::GetC() const { return C_; }
 
-float Line2D::CalcY_from_X(float x) { return -(A_ * x + C_) / B_; }
+double Line2D::CalcY_from_X(float x) { return -(A_ * x + C_) / B_; }
 
-float Line2D::GetX1() const { return x1_; }
+double Line2D::GetX1() const { return x1_; }
 
-float Line2D::GetY1() const { return y1_; }
+double Line2D::GetY1() const { return y1_; }
 
-float Line2D::GetX2() const { return x2_; }
+double Line2D::GetX2() const { return x2_; }
 
-float Line2D::GetY2() const { return y2_; }
+double Line2D::GetY2() const { return y2_; }
 
-bool Line2D::IsPointBelongLine(const float x, const float y) const {
+bool Line2D::IsPointBelongLine(const double x, const double y) const {
   float res = A_ * x + B_ * y + C_;
 
   return ((res > -TOLERANCE) && (res < TOLERANCE));
@@ -70,19 +71,53 @@ bool Line2D::IsPointBelongLine(const cv::Point2f &point) const {
 void Line2D::CalcDirectLineVector() {
   l_ = x2_ - x1_;
   m_ = y2_ - y1_;
+
+  if (std::abs(l_) < zero) {
+    l_ = 0.0;
+  }
+
+  if (std::abs(m_) < zero) {
+    m_ = 0.0;
+  }
 }
 
 void Line2D::CalcGeneralEquationCoefficients() {
-  float lm = l_ * m_;
+  if (l_ == 0 || m_ == 0) {
+    if (l_ == 0 && m_ > 0) {
+      A_ = m_;
+      B_ = 0;
+      C_ = -m_ * x1_;
+    }
 
-  if (lm > 0) {
-    A_ = m_;
-    B_ = -(l_);
-    C_ = y1_ * l_ - x1_ * m_;
+    if (l_ == 0 && m_ < 0) {
+      A_ = -m_;
+      B_ = 0;
+      C_ = m_ * x1_;
+    }
+
+    if (m_ == 0 && l_ > 0) {
+      A_ = 0;
+      B_ = l_;
+      C_ = -l_ * y1_;
+    }
+
+    if (m_ == 0 && l_ < 0) {
+      A_ = 0;
+      B_ = -l_;
+      C_ = l_ * y1_;
+    }
   } else {
-    A_ = -m_;
-    B_ = l_;
-    C_ = x1_ * m_ - y1_ * l_;
+    float lm = l_ * m_;
+
+    if (lm > 0) {
+      A_ = m_;
+      B_ = -(l_);
+      C_ = y1_ * l_ - x1_ * m_;
+    } else {
+      A_ = -m_;
+      B_ = l_;
+      C_ = x1_ * m_ - y1_ * l_;
+    }
   }
 }
 

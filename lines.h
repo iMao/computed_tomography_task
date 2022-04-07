@@ -11,7 +11,7 @@ namespace tmg {
 class Line2D {
  public:
   Line2D() = delete;
-  Line2D(unsigned int line_number, float x1, float y1, float x2, float y2);
+  Line2D(unsigned int line_number, double x1, double y1, double x2, double y2);
   Line2D(const Line2D& line);
   Line2D& operator=(const Line2D& line);
   ~Line2D();
@@ -20,18 +20,18 @@ class Line2D {
   Line2D& operator=(Line2D&& line) = default;
 
   unsigned int GetLineNumber() const;
-  float GetA() const;
-  float GetB() const;
-  float GetC() const;
+  double GetA() const;
+  double GetB() const;
+  double GetC() const;
 
-  float CalcY_from_X(float x);
+  double CalcY_from_X(float x);
 
-  float GetX1() const;
-  float GetY1() const;
-  float GetX2() const;
-  float GetY2() const;
+  double GetX1() const;
+  double GetY1() const;
+  double GetX2() const;
+  double GetY2() const;
 
-  bool IsPointBelongLine(const float x, const float y) const;
+  bool IsPointBelongLine(const double x, const double y) const;
   bool IsPointBelongLine(const cv::Point2f& point) const;
 
  private:
@@ -41,17 +41,17 @@ class Line2D {
  private:
   unsigned int line_number_;
 
-  float x1_;
-  float y1_;
-  float x2_;
-  float y2_;
+  double x1_;
+  double y1_;
+  double x2_;
+  double y2_;
 
-  float l_;
-  float m_;
+  double l_;
+  double m_;
 
-  float A_;
-  float B_;
-  float C_;
+  double A_;
+  double B_;
+  double C_;
 };
 
 std::ostream& operator<<(std::ostream& os, Line2D& line);

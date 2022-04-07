@@ -36,7 +36,7 @@ int main(int arg, char* argv[]) {
 
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  AlgorithmAlgebraicSolution(lines, 5000, number_points, detected_points);
+  AlgorithmAlgebraicSolution(lines, 1000, number_points, detected_points);
 
   tmg::PrintCrossPoints(detected_points, number_check_points);
 
