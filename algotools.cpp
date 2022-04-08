@@ -7,7 +7,8 @@
 
 namespace tmg {
 
-void ComposeM3x3(Line2D& L1, Line2D& L2, Line2D& L3, math::M3x3& matrix) {
+void ComposeM3x3(const Line2D& L1, const Line2D& L2, const Line2D& L3,
+                 math::M3x3& matrix) {
   matrix[0] = L1.GetA();
   matrix[1] = L1.GetB();
   matrix[2] = L1.GetC();
@@ -203,5 +204,10 @@ void DrawWeightedBresenhamLines(cv::Mat& cross_image_U16,
 
 void PointsLocalization(const cv::Mat& constellation_image,
                         std::vector<Point2D>& points) {}
+
+bool CheckBoundaries(const cv::Rect2i& rect, int x, int y) {
+  return (x > rect.x && x < (rect.x + rect.width) && y > rect.y &&
+          y < (rect.y + rect.height));
+}
 
 }  // namespace tmg

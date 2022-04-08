@@ -5,7 +5,8 @@ namespace tmg {
 constexpr double TOLERANCE{1.0};
 constexpr double zero{0.0001};
 
-Line2D::Line2D(unsigned int line_number, double x1, double y1, double x2, double y2)
+Line2D::Line2D(unsigned int line_number, double x1, double y1, double x2,
+               double y2)
     : line_number_(line_number), x1_(x1), y1_(y1), x2_(x2), y2_(y2) {
   CalcDirectLineVector();
   CalcGeneralEquationCoefficients();
@@ -114,7 +115,7 @@ void Line2D::CalcGeneralEquationCoefficients() {
       B_ = -(l_);
       C_ = y1_ * l_ - x1_ * m_;
     } else {
-      A_ = -m_;
+      A_ = -(m_);
       B_ = l_;
       C_ = x1_ * m_ - y1_ * l_;
     }

@@ -19,6 +19,7 @@ int main(int arg, char* argv[]) {
   std::string fname_points(argv[2]);
   std::string plot3d_fname("cross_points_plot3D.jpeg");
 
+  cv::Rect2i rect(-1000, 1000, 2000, 2000);
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
   std::vector<tmg::Point2D> detected_points;
@@ -36,7 +37,9 @@ int main(int arg, char* argv[]) {
 
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  AlgorithmAlgebraicSolution(lines, 1000, number_points, detected_points);
+  // tmg::CheckTest(lines[0], lines[1], lines[2], 5.0, 5.0);
+
+  AlgorithmAlgebraicSolution(lines, rect, number_points, detected_points);
 
   tmg::PrintCrossPoints(detected_points, number_check_points);
 

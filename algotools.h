@@ -14,8 +14,8 @@ namespace tmg {
  * @param L3
  * @param matrix
  */
-void ComposeM3x3(tmg::Line2D& L1, tmg::Line2D& L2, tmg::Line2D& L3,
-                 math::M3x3& matrix);
+void ComposeM3x3(const tmg::Line2D& L1, const tmg::Line2D& L2,
+                 const tmg::Line2D& L3, math::M3x3& matrix);
 
 /**
  * @brief CvtCoordinatesToImageCenter
@@ -87,6 +87,15 @@ void WeightedBresenhamLine(cv::Mat& cross_image_U16, int x1, int y1, int x2,
  */
 void DrawWeightedBresenhamLines(cv::Mat& cross_image_U16,
                                 std::vector<Line2D>& lines);
+
+/**
+ * @brief CheckBoundaries
+ * @param rect
+ * @param x
+ * @param y
+ * @return
+ */
+bool CheckBoundaries(const cv::Rect2i& rect, int x, int y);
 
 }  // namespace tmg
 

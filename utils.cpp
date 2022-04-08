@@ -137,4 +137,27 @@ void ShowObjects(cv::Mat& image, std::vector<cv::Rect>& object_collection) {
   }
 }
 
+bool CheckTest(const tmg::Line2D& l1, const tmg::Line2D& l2,
+               const tmg::Line2D& l3, double x, double y) {
+  math::M3x3 ABC3x3;
+  tmg::ComposeM3x3(l1, l2, l3, ABC3x3);
+
+  auto result = math::CalcIntersectionPoint(
+      ABC3x3, l1.GetLineNumber(), l2.GetLineNumber(), l3.GetLineNumber());
+
+  if (!result.has_value()) {
+    return false;
+  }
+
+  if (static_cast<int>(result.value().x) != static_cast<int>(x) &&
+      static_cast<int>(result.value().y) != static_cast<int>(y)) {
+    return false;
+  }
+
+  std::cout << "x:" << static_cast<int>(result.value().x) << std::endl;
+  std::cout << "y:" << static_cast<int>(result.value().y) << std::endl;
+
+  return true;
+}
+
 }  // namespace tmg
