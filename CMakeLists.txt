@@ -61,6 +61,7 @@ link_directories(${CMAKE_PREFIX_PATH}/lib/)
 set(HDR
     algotools.h
     algorithms.h
+    cluster.h
     determinant.h
     detector_interface.h
     dispersion_detector.h
@@ -72,6 +73,7 @@ set(HDR
 set(SRC
     algotools.cpp
     algorithms.cpp
+    cluster.cpp
     determinant.cpp
     dispersion_detector.cpp
     lines.cpp

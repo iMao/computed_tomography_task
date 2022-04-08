@@ -2,7 +2,10 @@
 #include <iostream>
 
 #include "algorithms.h"
+#include "cluster.h"
 #include "utils.h"
+
+std::vector<unsigned int> cluster[cltr::FIELD_HEIGHT][cltr::FIELD_WIDTH];
 
 int main(int arg, char* argv[]) {
   //
@@ -37,11 +40,11 @@ int main(int arg, char* argv[]) {
 
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  // tmg::CheckTest(lines[0], lines[1], lines[2], 5.0, 5.0);
+  cltr::InitClusterField(cluster);
 
-  AlgorithmAlgebraicSolution(lines, rect, number_points, detected_points);
+  cltr::ClusteringLines(lines, cluster, 5.0);
 
-  tmg::PrintCrossPoints(detected_points, number_check_points);
+  cltr::PrintMaxClusters(cluster);
 
   lines.clear();
   points.clear();

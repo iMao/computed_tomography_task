@@ -31,8 +31,10 @@ class Line2D {
   double GetX2() const;
   double GetY2() const;
 
-  bool IsPointBelongLine(const double x, const double y) const;
-  bool IsPointBelongLine(const cv::Point2f& point) const;
+  bool IsPointBelongLine(double x, double y) const;
+  bool IsPointBelongLine(const cv::Point2d& point) const;
+
+  double CalcDistanceToLine(double x, double y) const;
 
  private:
   void CalcDirectLineVector();
@@ -52,6 +54,8 @@ class Line2D {
   double A_;
   double B_;
   double C_;
+
+  double denominator_;  // sqrt(A^2 + B^2)
 };
 
 std::ostream& operator<<(std::ostream& os, Line2D& line);

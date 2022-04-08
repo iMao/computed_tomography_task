@@ -59,14 +59,20 @@ double Line2D::GetX2() const { return x2_; }
 
 double Line2D::GetY2() const { return y2_; }
 
-bool Line2D::IsPointBelongLine(const double x, const double y) const {
+bool Line2D::IsPointBelongLine(double x, double y) const {
   float res = A_ * x + B_ * y + C_;
 
   return ((res > -TOLERANCE) && (res < TOLERANCE));
 }
 
-bool Line2D::IsPointBelongLine(const cv::Point2f &point) const {
+bool Line2D::IsPointBelongLine(const cv::Point2d &point) const {
   return IsPointBelongLine(point.x, point.y);
+}
+
+double Line2D::CalcDistanceToLine(double x, double y) const {
+  double nominator = std::abs(A_ * x + B_ * y + C_);
+
+  return (nominator / denominator_);
 }
 
 void Line2D::CalcDirectLineVector() {
@@ -120,6 +126,8 @@ void Line2D::CalcGeneralEquationCoefficients() {
       C_ = x1_ * m_ - y1_ * l_;
     }
   }
+
+  denominator_ = std::sqrt(A_ * A_ + B_ * B_);
 }
 
 std::ostream &operator<<(std::ostream &os, Line2D &line) {
