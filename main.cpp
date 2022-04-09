@@ -5,8 +5,6 @@
 #include "cluster.h"
 #include "utils.h"
 
-std::vector<unsigned int> cluster[cltr::FIELD_HEIGHT][cltr::FIELD_WIDTH];
-
 int main(int arg, char* argv[]) {
   //
   std::cout << "Computed Tomography Task" << std::endl;
@@ -20,31 +18,32 @@ int main(int arg, char* argv[]) {
 
   std::string fname_lines(argv[1]);
   std::string fname_points(argv[2]);
-  std::string plot3d_fname("cross_points_plot3D.jpeg");
 
-  cv::Rect2i rect(-1000, 1000, 2000, 2000);
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
   std::vector<tmg::Point2D> detected_points;
 
+  std::vector<std::vector<unsigned int>> clusters;
+  std::vector<std::vector<unsigned int>> joined_clusters;
+
+  int min_cluster_size = 3;
   int number_lines;
   int number_points;
   int number_check_points;
 
   tmg::ReadFileLines(fname_lines, lines, number_lines, number_points);
+  tmg::ReadFilePoints(fname_points, points, number_check_points);
 
   std::cout << "Number  lines: " << number_lines << std::endl;
   std::cout << "Number points: " << number_points << std::endl;
-
-  tmg::ReadFilePoints(fname_points, points, number_check_points);
-
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  cltr::InitClusterField(cluster);
+  cltr::ClusteringLines(lines, -1000, 1000, -1000, 1000, clusters,
+                        min_cluster_size, 0.5);
 
-  cltr::ClusteringLines(lines, cluster, 5.0);
+  cltr::JoiningClusters(clusters, number_points, joined_clusters);
 
-  cltr::PrintMaxClusters(cluster);
+  cltr::PrintMaxClusters(joined_clusters);
 
   lines.clear();
   points.clear();

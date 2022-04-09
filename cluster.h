@@ -7,25 +7,16 @@
 
 namespace cltr {
 
-inline constexpr int FIELD_WIDTH{1000};
-inline constexpr int FIELD_HEIGHT{1000};
+void ClusteringLines(const std::vector<tmg::Line2D> &lines, int min_x,
+                     int max_x, int min_y, int max_y,
+                     std::vector<std::vector<unsigned int>> &clusters,
+                     int min_cluster_size, double e = 1.0);
 
-void InitClusterField(
-    std::vector<unsigned int> cluster[FIELD_HEIGHT][FIELD_WIDTH]);
+void PrintMaxClusters(const std::vector<std::vector<unsigned int>> &clusters);
 
-/**
- * @brief ClusteringLines
- * @param lines
- * @param cluster
- * @param e
- */
-void ClusteringLines(
-    const std::vector<tmg::Line2D>& lines,
-    std::vector<unsigned int> cluster[FIELD_HEIGHT][FIELD_WIDTH],
-    double e = 0.1);
-
-void PrintMaxClusters(
-    std::vector<unsigned int> cluster[FIELD_HEIGHT][FIELD_WIDTH]);
+void JoiningClusters(std::vector<std::vector<unsigned int>> &clusters,
+                     int number_points,
+                     std::vector<std::vector<unsigned int>> &joined_clusters);
 
 }  // namespace cltr
 
