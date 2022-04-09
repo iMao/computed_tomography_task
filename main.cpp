@@ -3,6 +3,7 @@
 
 #include "algorithms.h"
 #include "cluster.h"
+#include "matrix.h"
 #include "utils.h"
 
 int main(int arg, char* argv[]) {
@@ -38,12 +39,14 @@ int main(int arg, char* argv[]) {
   std::cout << "Number points: " << number_points << std::endl;
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  cltr::ClusteringLines(lines, -1000, 1000, -1000, 1000, clusters,
-                        min_cluster_size, 0.5);
+  //  cltr::ClusteringLines(lines, -1000, 1000, -1000, 1000, clusters,
+  //                        min_cluster_size, 0.5);
 
-  cltr::JoiningClusters(clusters, number_points, joined_clusters);
+  //  cltr::JoiningClusters(clusters, number_points, joined_clusters);
 
-  cltr::PrintMaxClusters(joined_clusters);
+  //  cltr::PrintMaxClusters(joined_clusters);
+
+  math::TestMatrixMul();
 
   lines.clear();
   points.clear();
