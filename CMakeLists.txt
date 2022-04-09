@@ -67,6 +67,7 @@ set(HDR
     dispersion_detector.h
     lines.h
     matrix.h
+    matrix_utils.h
     points.h
     utils.h
     )
@@ -79,6 +80,7 @@ set(SRC
     dispersion_detector.cpp
     lines.cpp
     matrix.cpp
+    matrix_utils.cpp
     points.cpp
     utils.cpp
     )

@@ -47,6 +47,7 @@ int main(int arg, char* argv[]) {
   //  cltr::PrintMaxClusters(joined_clusters);
 
   math::TestMatrixMul();
+  math::TestDeterminant();
 
   lines.clear();
   points.clear();

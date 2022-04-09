@@ -40,9 +40,13 @@ void ComposeColumnVector(const std::vector<unsigned int>& cluster,
 void ComposeColumnVector(const std::vector<unsigned int>& cluster,
                          const std::vector<tmg::Line2D>& lines, Matrix& column);
 
-void MatrixMul(const Matrix& M, const Matrix& N, Matrix& P);
+bool MatrixMul(const Matrix& M, const Matrix& N, Matrix& P);
+
+double Determinant(math::Matrix& matrix);
 
 void TestMatrixMul();
+
+void TestDeterminant();
 
 }  // namespace math
 

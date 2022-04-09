@@ -72,6 +72,7 @@ const double &Matrix::at(unsigned int y, unsigned int x) const {
 }
 
 double &Matrix::operator[](unsigned int i) { return matrix_[i]; }
+
 const double &Matrix::operator[](unsigned int i) const { return matrix_[i]; }
 
 std::ostream &operator<<(std::ostream &os, Matrix &m) {
@@ -114,7 +115,15 @@ void ComposeColumnVector(const std::vector<unsigned int> &cluster,
   set_cluster.clear();
 }
 
-void MatrixMul(const Matrix &M, const Matrix &N, Matrix &P) {
+bool MatrixMul(const Matrix &M, const Matrix &N, Matrix &P) {
+  if (M.cols_ != N.rows_) {
+    return false;
+  }
+
+  if (P.rows_ != M.rows_ || P.cols_ != N.cols_) {
+    return false;
+  }
+
   for (int i = 0; i < M.rows_; i++) {
     for (int j = 0; j < N.cols_; j++) {
       for (int k = 0; k < M.cols_; k++) {
@@ -122,6 +131,43 @@ void MatrixMul(const Matrix &M, const Matrix &N, Matrix &P) {
       }
     }
   }
+  return true;
+}
+
+double determinant(double *matrix, int n) {
+  double det = 0.0;
+  double *submatrix = new double[n * n];
+  if (n == 2) {
+    double det2x2 = ((matrix[0 * n + 0] * matrix[1 * n + 1]) -
+                     (matrix[1 * n + 0] * matrix[0 * n + 1]));
+
+    delete[] submatrix;
+    return det2x2;
+  } else {
+    for (int x = 0; x < n; x++) {
+      int subi = 0;
+      for (int i = 1; i < n; i++) {
+        int subj = 0;
+        for (int j = 0; j < n; j++) {
+          if (j == x) {
+            continue;
+          }
+          submatrix[subi * n + subj] = matrix[i * n + j];
+          subj++;
+        }
+        subi++;
+      }
+      det = det +
+            (pow(-1, x) * matrix[0 * n + x] * determinant(submatrix, n - 1));
+    }
+  }
+
+  delete[] submatrix;
+  return det;
+}
+
+double Determinant(Matrix &matrix) {
+  return determinant(matrix.matrix_.get(), matrix.rows_);
 }
 
 void TestMatrixMul() {
@@ -175,6 +221,37 @@ void TestMatrixMul() {
   std::cout << M << std::endl;
   std::cout << C << std::endl;
   std::cout << R << std::endl;
+}
+
+void TestDeterminant() {
+  Matrix M3x3(3, 3);
+  M3x3.at(0, 0) = 3.0;
+  M3x3.at(1, 0) = 1.0;
+  M3x3.at(2, 0) = 4.0;
+
+  M3x3.at(0, 1) = 2.0;
+  M3x3.at(1, 1) = 1.0;
+  M3x3.at(2, 1) = 2.0;
+
+  M3x3.at(0, 2) = 1.0;
+  M3x3.at(1, 2) = 2.0;
+  M3x3.at(2, 2) = 3.0;
+
+  Matrix M2x2(2, 2);
+  M2x2.at(0, 0) = 4.0;
+  M2x2.at(1, 0) = 2.0;
+
+  M2x2.at(0, 1) = 3.0;
+  M2x2.at(1, 1) = 1.0;
+
+  double detM3x3 = Determinant(M3x3);
+  double detM2x2 = Determinant(M2x2);
+
+  std::cout << M3x3 << std::endl;
+  std::cout << M2x2 << std::endl;
+
+  std::cout << "det3x3: " << detM3x3 << std::endl;
+  std::cout << "det2x2: " << detM2x2 << std::endl;
 }
 
 }  // namespace math
