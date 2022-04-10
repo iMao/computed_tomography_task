@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.1, 2022-04-10T12:55:41. -->
+<!-- Written by QtCreator 6.0.1, 2022-04-10T20:07:30. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -213,7 +213,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">computed_tomography_task</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.computed_tomography_task</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">computed_tomography_task</value>
-    <value type="QString" key="RunConfiguration.Arguments">/home/main/Documents/test_files/1-lines.txt    /home/main/Documents/test_files/1-points.txt</value>
+    <value type="QString" key="RunConfiguration.Arguments">/home/main/Documents/test_files/check-lines.txt    /home/main/Documents/test_files/4-points.txt   /home/main/Documents/test_files/check-points.txt</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>

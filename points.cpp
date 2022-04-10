@@ -42,10 +42,16 @@ Point2D& Point2D::operator=(Point2D&& point) {
 Point2D::~Point2D() {}
 
 std::ostream& operator<<(std::ostream& os, const Point2D& point) {
-  os << "x:" << std::setw(6) << point.x << " y:" << std::setw(6) << point.y
-     << " lines:" << std::setw(4) << point.number_lines_through_point;
+  os << std::setw(8) << point.x << "  " << std::setw(8) << point.y << "  "
+     << std::setw(4) << point.number_lines_through_point;
 
   return os;
+}
+
+std::fstream& operator<<(std::fstream& ofs, const Point2D& point) {
+  ofs << std::setw(8) << point.x << "  " << std::setw(8) << point.y << "  "
+      << std::setw(5) << point.number_lines_through_point;
+  return ofs;
 }
 
 }  // namespace tmg

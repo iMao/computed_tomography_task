@@ -1,7 +1,6 @@
 #include "matrix.h"
 
 #include <iomanip>
-#include <set>
 
 namespace math {
 
@@ -9,27 +8,6 @@ const double SMALL = 1.0E-30;
 
 Matrix::Matrix(int rows, int cols)
     : rows_(rows), cols_(cols), matrix_(new double[rows * cols]) {}
-
-Matrix::Matrix(const std::vector<unsigned int> &cluster,
-               const std::vector<tmg::Line2D> &lines)
-    : rows_(cluster.size()), cols_(2) {
-  int size = cluster.size() * 2;
-  matrix_ = new double[size];
-
-  std::set<unsigned int> set_cluster(cluster.begin(), cluster.end());
-
-  int y = 0;
-  int x = 0;
-  for (auto &l : lines) {
-    if (set_cluster.find(l.GetLineNumber()) != set_cluster.end()) {
-      matrix_[y * cols_ + x] = l.GetA();
-      x++;
-      matrix_[y * cols_ + x] = l.GetB();
-      y++;
-    }
-  }
-  set_cluster.clear();
-}
 
 Matrix::Matrix(const Matrix &matrix)
     : rows_(matrix.rows_), cols_(matrix.cols_) {
@@ -41,7 +19,9 @@ Matrix::Matrix(const Matrix &matrix)
 }
 
 Matrix::Matrix(Matrix &&matrix)
-    : rows_(matrix.rows_), cols_(matrix.cols_), matrix_(matrix.matrix_) {}
+    : rows_(matrix.rows_), cols_(matrix.cols_), matrix_(matrix.matrix_) {
+  matrix.matrix_ = nullptr;
+}
 
 Matrix &Matrix::operator=(const Matrix &matrix) {
   rows_ = matrix.rows_;
@@ -63,6 +43,8 @@ Matrix &Matrix::operator=(Matrix &&matrix) {
   rows_ = matrix.rows_;
   cols_ = matrix.cols_;
   matrix_ = matrix.matrix_;
+  matrix.matrix_ = nullptr;
+
   return *this;
 }
 
@@ -94,6 +76,26 @@ std::ostream &operator<<(std::ostream &os, Matrix &m) {
     os << std::endl;
   }
   return os;
+}
+
+double RoundTooLittleValue(double x) { return (std::abs(x) < 0.0001 ? 0 : x); }
+
+void ComposeMatrixFromClusterLines(const std::vector<unsigned int> &cluster,
+                                   const std::vector<tmg::Line2D> &lines,
+                                   Matrix &matrix) {
+  std::set<unsigned int> set_cluster(cluster.begin(), cluster.end());
+
+  int y = 0;
+  int x = 0;
+  for (auto &l : lines) {
+    if (set_cluster.find(l.GetLineNumber()) != set_cluster.end()) {
+      matrix.at(y, x) = l.GetA();
+      x++;
+      matrix.at(y, x) = l.GetB();
+      y++;
+      x = 0;
+    }
+  }
 }
 
 void ComposeColumnVector(const std::vector<unsigned int> &cluster,
@@ -389,6 +391,31 @@ void TestCramerRuleSolver() {
     std::cout << "Matrix X 3x1: " << X3x1 << std::endl;
   } else {
     std::cout << "Wrong params of linear system\n";
+  }
+}
+
+void TestConstructors() {
+  std::vector<math::Matrix> matrices;
+
+  Matrix M3x3(3, 3);
+  M3x3.at(0, 0) = 3.0;
+  M3x3.at(1, 0) = 1.0;
+  M3x3.at(2, 0) = 4.0;
+
+  M3x3.at(0, 1) = 2.0;
+  M3x3.at(1, 1) = 1.0;
+  M3x3.at(2, 1) = 2.0;
+
+  M3x3.at(0, 2) = 1.0;
+  M3x3.at(1, 2) = 2.0;
+  M3x3.at(2, 2) = 3.0;
+
+  for (int i = 0; i < 5; i++) {
+    matrices.push_back(M3x3);
+  }
+
+  for (int i = 0; i < 5; i++) {
+    std::cout << matrices[i] << std::endl;
   }
 }
 

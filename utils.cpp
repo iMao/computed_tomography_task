@@ -55,9 +55,10 @@ ReadingFileStatus ReadFileLines(const std::string& fname,
       memset(buffer, '\0', BUFFER_SIZE);
     }
 
+    ifs.close();
+
   } catch (const std::exception& e) {
     std::cout << e.what() << std::endl;
-    ifs.close();
     return ReadingFileStatus::kREAD_FAILURE;
   }
 
@@ -127,6 +128,23 @@ void PrintCrossPoints(const std::vector<Point2D>& cross_points,
   for (int i = 0; i < max_number_points; i++) {
     std::cout << cross_points[i] << std::endl;
   }
+}
+
+bool WriteCrossPointsToFile(const std::string& outfile,
+                            const std::vector<Point2D>& cross_points) {
+  std::fstream ofs(outfile, ofs.out);
+  if (!ofs.is_open()) {
+    std::cout << "Couldn't open file " << outfile << std::endl;
+    return false;
+  }
+
+  ofs << cross_points.size() << std::endl;
+  for (auto& p : cross_points) {
+    ofs << p << std::endl;
+  }
+  ofs.close();
+
+  return true;
 }
 
 void ShowObjects(cv::Mat& image, std::vector<cv::Rect>& object_collection) {

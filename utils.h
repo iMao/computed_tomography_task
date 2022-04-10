@@ -53,6 +53,14 @@ void PrintCrossPoints(const std::vector<tmg::Point2D>& cross_points,
                       size_t max_number_points = 10);
 
 /**
+ * @brief WriteCrossPointsToFile
+ * @param outfile
+ * @param cross_points
+ */
+bool WriteCrossPointsToFile(const std::string& outfile,
+                            const std::vector<tmg::Point2D>& cross_points);
+
+/**
  * @brief ShowObjects
  * @param image
  * @param object_collection

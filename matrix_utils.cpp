@@ -10,12 +10,14 @@ void ComposeLinearSystems(
     std::vector<math::Matrix> &columns_C) {
   //
   for (auto &cluster : joined_clusters) {
-    math::Matrix ab(cluster, lines);
-    matrices_AB.push_back(ab);
-
+    math::Matrix ab(cluster.size(), 2);
     math::Matrix c(cluster.size(), 1);
+
+    math::ComposeMatrixFromClusterLines(cluster, lines, ab);
     math::ComposeColumnVector(cluster, lines, c);
-    columns_C.push_back(c);
+
+    matrices_AB.push_back(std::move(ab));
+    columns_C.push_back(std::move(c));
   }
 }
 

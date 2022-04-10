@@ -100,8 +100,14 @@ add_executable(test_mathgl_picture test_mathgl_picture_main.cpp)
 target_link_libraries(test_mathgl_picture mgl  )
 
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g3  -fPIC -pthread -fsanitize=bounds -fsanitize=address ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g3  -fPIC -pthread -fsanitize=bounds -fsanitize=address ")
+
 
 
 #task
 add_executable(computed_tomography_task  ${HDR} ${SRC} main.cpp)
 target_link_libraries(computed_tomography_task mgl ${OpenCV_LIBS})
+#target_compile_options(computed_tomography_task PRIVATE "SHELL:--param ggc-min-expand=1")
+#target_compile_options(computed_tomography_task PRIVATE "SHELL:--param ggc-min-heapsize=262144")
+

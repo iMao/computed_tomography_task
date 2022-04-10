@@ -11,15 +11,17 @@ int main(int arg, char* argv[]) {
   //
   std::cout << "Computed Tomography Task" << std::endl;
 
-  if (arg < 3) {
+  if (arg < 4) {
     std::cout << "Number of Cmdparams is no enough" << std::endl;
     exit(-1);
   }
 
-  std::cout << "Cmdparams: " << argv[1] << " " << argv[2] << std::endl;
+  std::cout << "Cmdparams: " << argv[1] << " " << argv[2] << " " << argv[3]
+            << std::endl;
 
   std::string fname_lines(argv[1]);
   std::string fname_points(argv[2]);
+  std::string outfile_points(argv[3]);
 
   std::vector<tmg::Line2D> lines;
   std::vector<tmg::Point2D> points;
@@ -38,8 +40,9 @@ int main(int arg, char* argv[]) {
 
   tmg::AgebraicSolution(lines, points, number_points, detected_points);
 
-  // print of result: all cross points
   tmg::PrintCrossPoints(detected_points, 1000);
+
+  tmg::WriteCrossPointsToFile(outfile_points, detected_points);
 
   lines.clear();
   points.clear();

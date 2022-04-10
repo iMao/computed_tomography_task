@@ -1,6 +1,7 @@
 #ifndef TMGTYPES_H
 #define TMGTYPES_H
 
+#include <fstream>
 #include <iostream>
 #include <opencv2/core.hpp>
 
@@ -22,6 +23,8 @@ class Point2D : public cv::Point2d {
 };
 
 std::ostream& operator<<(std::ostream& os, const Point2D& point);
+
+std::fstream& operator<<(std::fstream& ofs, const Point2D& point);
 
 }  // namespace tmg
 

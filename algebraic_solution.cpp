@@ -70,21 +70,13 @@ void AgebraicSolution(const std::vector<Line2D> &lines,
   for (size_t j = 0; j < square_matrices_A.size(); j++) {
     if (math::CramerRuleSolver(square_matrices_A[j], column_matrices_B[j],
                                column_matrices_X[j])) {
-      tmg::Point2D p(column_matrices_X[j].at(0, 0),
-                     column_matrices_X[j].at(1, 0));
+      tmg::Point2D p(math::RoundTooLittleValue(column_matrices_X[j].at(0, 0)),
+                     math::RoundTooLittleValue(column_matrices_X[j].at(1, 0)),
+                     matrices_AB[j].rows_);
 
       detected_points.push_back(p);
     }
   }
-
-  clusters.clear();
-  joined_clusters.clear();
-  matrices_AB.clear();
-  columns_C.clear();
-  transposed_matrices_AB.clear();
-  square_matrices_A.clear();
-  column_matrices_B.clear();
-  column_matrices_X.clear();
 }
 
 }  // namespace tmg

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <set>
 #include <vector>
 
 #include "lines.h"
@@ -15,8 +16,6 @@ namespace math {
 struct Matrix {
   Matrix() = delete;
   Matrix(int rows, int cols);
-  Matrix(const std::vector<unsigned int>& cluster,
-         const std::vector<tmg::Line2D>& lines);
   Matrix(const Matrix& matrix);
   Matrix(Matrix&& matrix);
   Matrix& operator=(const Matrix& matrix);
@@ -35,6 +34,23 @@ struct Matrix {
 };
 
 std::ostream& operator<<(std::ostream& os, Matrix& m);
+
+/**
+ * @brief RoundTooLittleValue
+ * @param x
+ * @return
+ */
+double RoundTooLittleValue(double x);
+
+/**
+ * @brief ComposeMatrixFromClusterLines
+ * @param cluster
+ * @param lines
+ * @param m
+ */
+void ComposeMatrixFromClusterLines(const std::vector<unsigned int>& cluster,
+                                   const std::vector<tmg::Line2D>& lines,
+                                   math::Matrix& matrix);
 
 /**
  * @brief ComposeColumnVector
@@ -107,6 +123,11 @@ void TestTransposeMatrix();
  * @brief TestCramerRuleSolver
  */
 void TestCramerRuleSolver();
+
+/**
+ * @brief TestConstructors
+ */
+void TestConstructors();
 
 }  // namespace math
 
