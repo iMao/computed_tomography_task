@@ -9,6 +9,9 @@
 
 namespace math {
 
+/**
+ * @brief The Matrix struct
+ */
 struct Matrix {
   Matrix() = delete;
   Matrix(int rows, int cols);
@@ -18,7 +21,7 @@ struct Matrix {
   Matrix(Matrix&& matrix);
   Matrix& operator=(const Matrix& matrix);
   Matrix& operator=(Matrix&& matrix);
-  virtual ~Matrix();
+  ~Matrix();
 
   double& at(unsigned int y, unsigned int x);
   const double& at(unsigned int y, unsigned int x) const;
@@ -28,25 +31,82 @@ struct Matrix {
 
   int rows_;
   int cols_;
-  std::shared_ptr<double[]> matrix_;
+  double* matrix_;
 };
 
 std::ostream& operator<<(std::ostream& os, Matrix& m);
 
+/**
+ * @brief ComposeColumnVector
+ * @param cluster
+ * @param lines
+ * @param column
+ */
 void ComposeColumnVector(const std::vector<unsigned int>& cluster,
                          const std::vector<tmg::Line2D>& lines,
                          std::vector<double>& column);
-
+/**
+ * @brief ComposeColumnVector
+ * @param cluster
+ * @param lines
+ * @param column
+ */
 void ComposeColumnVector(const std::vector<unsigned int>& cluster,
                          const std::vector<tmg::Line2D>& lines, Matrix& column);
+/**
+ * @brief CreateTransposedMatrix
+ * @param m
+ * @param transposed_m
+ * @return
+ */
+bool CreateTransposedMatrix(const Matrix& m, Matrix& transposed_m);
 
+/**
+ * @brief MatrixMul
+ * @param M
+ * @param N
+ * @param P
+ * @return
+ */
 bool MatrixMul(const Matrix& M, const Matrix& N, Matrix& P);
 
-double Determinant(math::Matrix& matrix);
+/**
+ * @brief Determinant
+ * @param B
+ * @return
+ */
+double Determinant(const math::Matrix& B);
 
+/**
+ * @brief CramerRuleSolver to solve linear system of equation
+ * @param A - square matrix
+ * @param B - right part vector
+ * @param X - vector of unknown variables
+ */
+bool CramerRuleSolver(const math::Matrix& A, const math::Matrix& vecB,
+                      math::Matrix& vecX);
+
+//----------------------Tests--------------------------
+
+/**
+ * @brief TestMatrixMul
+ */
 void TestMatrixMul();
 
+/**
+ * @brief TestDeterminant
+ */
 void TestDeterminant();
+
+/**
+ * @brief TestTransposeMatrix
+ */
+void TestTransposeMatrix();
+
+/**
+ * @brief TestCramerRuleSolver
+ */
+void TestCramerRuleSolver();
 
 }  // namespace math
 

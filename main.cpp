@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "algebraic_solution.h"
 #include "algorithms.h"
 #include "cluster.h"
 #include "matrix.h"
@@ -24,10 +25,6 @@ int main(int arg, char* argv[]) {
   std::vector<tmg::Point2D> points;
   std::vector<tmg::Point2D> detected_points;
 
-  std::vector<std::vector<unsigned int>> clusters;
-  std::vector<std::vector<unsigned int>> joined_clusters;
-
-  int min_cluster_size = 3;
   int number_lines;
   int number_points;
   int number_check_points;
@@ -39,18 +36,14 @@ int main(int arg, char* argv[]) {
   std::cout << "Number points: " << number_points << std::endl;
   std::cout << "Number  check points: " << number_check_points << std::endl;
 
-  //  cltr::ClusteringLines(lines, -1000, 1000, -1000, 1000, clusters,
-  //                        min_cluster_size, 0.5);
+  tmg::AgebraicSolution(lines, points, number_points, detected_points);
 
-  //  cltr::JoiningClusters(clusters, number_points, joined_clusters);
-
-  //  cltr::PrintMaxClusters(joined_clusters);
-
-  math::TestMatrixMul();
-  math::TestDeterminant();
+  // print of result: all cross points
+  tmg::PrintCrossPoints(detected_points, 1000);
 
   lines.clear();
   points.clear();
+  detected_points.clear();
 
   return 0;
 }

@@ -1,18 +1,20 @@
 #include "matrix.h"
 
+#include <iomanip>
 #include <set>
 
 namespace math {
 
+const double SMALL = 1.0E-30;
+
 Matrix::Matrix(int rows, int cols)
-    : rows_(rows),
-      cols_(cols),
-      matrix_(std::make_unique<double[]>(rows * cols)) {}
+    : rows_(rows), cols_(cols), matrix_(new double[rows * cols]) {}
 
 Matrix::Matrix(const std::vector<unsigned int> &cluster,
                const std::vector<tmg::Line2D> &lines)
     : rows_(cluster.size()), cols_(2) {
-  matrix_ = std::make_unique<double[]>(rows_ * cols_);
+  int size = cluster.size() * 2;
+  matrix_ = new double[size];
 
   std::set<unsigned int> set_cluster(cluster.begin(), cluster.end());
 
@@ -30,24 +32,27 @@ Matrix::Matrix(const std::vector<unsigned int> &cluster,
 }
 
 Matrix::Matrix(const Matrix &matrix)
-    : rows_(matrix.rows_),
-      cols_(matrix.cols_),
-      matrix_(std::make_unique<double[]>(matrix.rows_ * matrix.cols_)) {
+    : rows_(matrix.rows_), cols_(matrix.cols_) {
+  int size = matrix.rows_ * matrix.cols_;
+  matrix_ = new double[size];
   for (int j = 0; j < (rows_ * cols_); j++) {
     matrix_[j] = matrix.matrix_[j];
   }
 }
 
 Matrix::Matrix(Matrix &&matrix)
-    : rows_(matrix.rows_),
-      cols_(matrix.cols_),
-      matrix_(std::move(matrix.matrix_)) {}
+    : rows_(matrix.rows_), cols_(matrix.cols_), matrix_(matrix.matrix_) {}
 
 Matrix &Matrix::operator=(const Matrix &matrix) {
   rows_ = matrix.rows_;
   cols_ = matrix.cols_;
-  matrix_ = nullptr;
-  matrix_ = std::make_unique<double[]>(matrix.rows_ * matrix.cols_);
+
+  if (matrix_) {
+    delete[] matrix_;
+  }
+
+  int size = matrix.rows_ * matrix.cols_;
+  matrix_ = new double[size];
   for (int j = 0; j < (rows_ * cols_); j++) {
     matrix_[j] = matrix.matrix_[j];
   }
@@ -57,11 +62,15 @@ Matrix &Matrix::operator=(const Matrix &matrix) {
 Matrix &Matrix::operator=(Matrix &&matrix) {
   rows_ = matrix.rows_;
   cols_ = matrix.cols_;
-  matrix_ = std::move(matrix.matrix_);
+  matrix_ = matrix.matrix_;
   return *this;
 }
 
-Matrix::~Matrix() {}
+Matrix::~Matrix() {
+  if (matrix_) {
+    delete[] matrix_;
+  }
+}
 
 double &Matrix::at(unsigned int y, unsigned int x) {
   return matrix_[y * cols_ + x];
@@ -80,7 +89,7 @@ std::ostream &operator<<(std::ostream &os, Matrix &m) {
   //
   for (int y = 0; y < m.rows_; y++) {
     for (int x = 0; x < m.cols_; x++) {
-      os << m[y * m.cols_ + x] << " ";
+      os << std::setw(5) << m[y * m.cols_ + x] << " ";
     }
     os << std::endl;
   }
@@ -115,6 +124,20 @@ void ComposeColumnVector(const std::vector<unsigned int> &cluster,
   set_cluster.clear();
 }
 
+bool CreateTransposedMatrix(const Matrix &m, Matrix &transposed_m) {
+  if (m.cols_ != transposed_m.rows_ || m.rows_ != transposed_m.cols_) {
+    return false;
+  }
+
+  for (int y = 0; y < m.rows_; y++) {
+    for (int x = 0; x < m.cols_; x++) {
+      transposed_m.at(x, y) = m.at(y, x);
+    }
+  }
+
+  return true;
+}
+
 bool MatrixMul(const Matrix &M, const Matrix &N, Matrix &P) {
   if (M.cols_ != N.rows_) {
     return false;
@@ -134,42 +157,86 @@ bool MatrixMul(const Matrix &M, const Matrix &N, Matrix &P) {
   return true;
 }
 
-double determinant(double *matrix, int n) {
-  double det = 0.0;
-  double *submatrix = new double[n * n];
-  if (n == 2) {
-    double det2x2 = ((matrix[0 * n + 0] * matrix[1 * n + 1]) -
-                     (matrix[1 * n + 0] * matrix[0 * n + 1]));
+double Determinant(const Matrix &B) {
+  int n = B.cols_;
 
-    delete[] submatrix;
-    return det2x2;
-  } else {
-    for (int x = 0; x < n; x++) {
-      int subi = 0;
-      for (int i = 1; i < n; i++) {
-        int subj = 0;
-        for (int j = 0; j < n; j++) {
-          if (j == x) {
-            continue;
-          }
-          submatrix[subi * n + subj] = matrix[i * n + j];
-          subj++;
-        }
-        subi++;
+  Matrix A(B);
+
+  double det = 1.0;
+
+  // Row operations for i = 0, ,,,, n - 2 (n-1 not needed)
+  for (int i = 0; i < n - 1; i++) {
+    // Partial pivot: find row r below with largest element in column i
+    int r = i;
+    double maxA = std::abs(A.at(i, i));
+    for (int k = i + 1; k < n; k++) {
+      double val = std::abs(A.at(k, i));
+      if (val > maxA) {
+        r = k;
+        maxA = val;
       }
-      det = det +
-            (pow(-1, x) * matrix[0 * n + x] * determinant(submatrix, n - 1));
     }
+    if (r != i) {
+      for (int j = i; j < n; j++) {
+        std::swap(A.at(i, j), A.at(r, j));
+      }
+      det = -det;
+    }
+
+    // Row operations to make upper-triangular
+    double pivot = A.at(i, i);
+    // check if Singular matrix
+    if (abs(pivot) < SMALL) {
+      return 0.0;
+    }
+
+    // On lower rows
+    for (int r = i + 1; r < n; r++) {
+      // Multiple of row i to clear element in ith column
+      double multiple = A.at(r, i) / pivot;
+      for (int j = i; j < n; j++) {
+        A.at(r, j) -= multiple * A.at(i, j);
+      }
+    }
+    det *= pivot;  // Determinant is product of diagonal
   }
 
-  delete[] submatrix;
+  det *= A.at(n - 1, n - 1);
+
   return det;
 }
 
-double Determinant(Matrix &matrix) {
-  return determinant(matrix.matrix_.get(), matrix.rows_);
+bool CramerRuleSolver(const Matrix &A, const Matrix &vecB, Matrix &vecX) {
+  if ((A.cols_ != A.rows_) || (vecB.rows_ != A.rows_) ||
+      (vecX.rows_ != A.rows_)) {
+    return false;
+  }
+
+  std::vector<math::Matrix> augmented_matricesA;
+
+  // matrix formation
+  for (int i = 0; i < A.cols_; i++) {
+    augmented_matricesA.push_back(A);
+  }
+
+  // column substitution
+  for (int i = 0; i < A.cols_; i++) {
+    for (int j = 0; j < A.rows_; j++) {
+      augmented_matricesA[i].at(j, i) = vecB.at(j, 0);
+    }
+  }
+
+  double detA = Determinant(A);
+
+  // calculation of vector X values
+  for (int k = 0; k < A.cols_; k++) {
+    vecX.at(k, 0) = Determinant(augmented_matricesA[k]) / detA;
+  }
+
+  return true;
 }
 
+//-------------------------Tests---------------------------------------
 void TestMatrixMul() {
   Matrix M(2, 3);
   Matrix N(3, 2);
@@ -252,6 +319,77 @@ void TestDeterminant() {
 
   std::cout << "det3x3: " << detM3x3 << std::endl;
   std::cout << "det2x2: " << detM2x2 << std::endl;
+}
+
+void TestTransposeMatrix() {
+  Matrix M3x3(3, 3);
+  M3x3.at(0, 0) = 3.0;
+  M3x3.at(1, 0) = 1.0;
+  M3x3.at(2, 0) = 4.0;
+
+  M3x3.at(0, 1) = 2.0;
+  M3x3.at(1, 1) = 1.0;
+  M3x3.at(2, 1) = 2.0;
+
+  M3x3.at(0, 2) = 1.0;
+  M3x3.at(1, 2) = 2.0;
+  M3x3.at(2, 2) = 3.0;
+
+  Matrix TM3x3(3, 3);
+  CreateTransposedMatrix(M3x3, TM3x3);
+
+  std::cout << "Matrix 3x3:            " << M3x3 << std::endl;
+  std::cout << "Transposed Matrix 3x3: " << TM3x3 << std::endl;
+
+  Matrix M3x2(3, 2);
+  M3x2.at(0, 0) = 3.0;
+  M3x2.at(1, 0) = 1.0;
+  M3x2.at(2, 0) = 4.0;
+
+  M3x2.at(0, 1) = 2.0;
+  M3x2.at(1, 1) = 1.0;
+  M3x2.at(2, 1) = 2.0;
+
+  Matrix TM2x3(2, 3);
+  CreateTransposedMatrix(M3x2, TM2x3);
+
+  std::cout << "Matrix 3x2:            " << M3x2 << std::endl;
+  std::cout << "Transposed Matrix 2x3: " << TM2x3 << std::endl;
+}
+
+void TestCramerRuleSolver() {
+  Matrix A3x3(3, 3);
+
+  A3x3.at(0, 0) = 2.0;
+  A3x3.at(1, 0) = 1.0;
+  A3x3.at(2, 0) = 1.0;
+
+  A3x3.at(0, 1) = 1.0;
+  A3x3.at(1, 1) = -1.0;
+  A3x3.at(2, 1) = 2.0;
+
+  A3x3.at(0, 2) = 1.0;
+  A3x3.at(1, 2) = -1.0;
+  A3x3.at(2, 2) = 1.0;
+
+  Matrix B3x1(3, 1);
+  B3x1.at(0, 0) = 3.0;
+  B3x1.at(1, 0) = 0.0;
+  B3x1.at(2, 0) = 0.0;
+
+  Matrix X3x1(3, 1);
+  X3x1.at(0, 0) = 0.0;
+  X3x1.at(1, 0) = 0.0;
+  X3x1.at(2, 0) = 0.0;
+
+  if (CramerRuleSolver(A3x3, B3x1, X3x1)) {
+    std::cout << "Solution of linear system\n";
+    std::cout << "Matrix A 3x3: " << A3x3 << std::endl;
+    std::cout << "Matrix B 3x1: " << B3x1 << std::endl;
+    std::cout << "Matrix X 3x1: " << X3x1 << std::endl;
+  } else {
+    std::cout << "Wrong params of linear system\n";
+  }
 }
 
 }  // namespace math

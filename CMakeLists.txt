@@ -59,6 +59,7 @@ link_directories(${CMAKE_PREFIX_PATH}/lib/)
 
 
 set(HDR
+    algebraic_solution.h
     algotools.h
     algorithms.h
     cluster.h
@@ -73,6 +74,7 @@ set(HDR
     )
 
 set(SRC
+    algebraic_solution.cpp
     algotools.cpp
     algorithms.cpp
     cluster.cpp

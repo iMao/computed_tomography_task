@@ -6,6 +6,9 @@ namespace tmg {
 
 Point2D::Point2D() : cv::Point2d(0.0, 0.0), number_lines_through_point(0) {}
 
+Point2D::Point2D(double x, double y)
+    : cv::Point2d(x, y), number_lines_through_point(0) {}
+
 Point2D::Point2D(double x, double y, int _number_lines_through_point)
     : cv::Point2d(x, y),
       number_lines_through_point(_number_lines_through_point) {}
